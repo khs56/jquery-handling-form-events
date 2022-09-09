@@ -1,0 +1,164 @@
+<html>
+
+<head>
+    <title>The Example Form</title>
+    <style>
+        div {
+            margin: 10px;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.3/themes/flick/jquery-ui.css" />
+    <script>
+
+        //'https://us-street.api.smartystreets.com/street-address?auth-id=a4c6e99a-9fc5-5e46-3bc4-5294e5cb6e8f&auth-token=IrWwPbf8YVIzkUWjwfS4&street=1600+amphitheatre+pkwy&city=mountain+view&state=CA&candidates=10'
+
+        $(document).ready(function () {
+            $('input:is([type=text]').change(function () {
+                let empties = false;
+                $('input:is([type=text]').each(function () {
+                    if (!$(this).val()) {
+                        empties = true;
+                        return;
+                    }
+                });
+                console.log("empties = " + empties);
+                if (empties) {
+                    $("#submitButton").attr("disabled", "disabled");
+                } else {
+                    $("#submitButton").removeAttr("disabled");
+                }
+            });
+
+            $("#street").autocomplete({
+                source: function (request, response) {
+                    let form = $('#addr_form');
+                    let formData = new FormData(form[0]);
+                    $.ajax({
+                        data: {
+                            street: formData.get('street'),
+                            country: 'United States',
+                        },
+                        url: "https://api.myptv.com/geocoding/v1/locations/by-address",
+                        headers: { apiKey: "ZTc1ZDBkOWFlZGNjNDhiZjg3NTM2YWFjNjBkZDc3NjM6MzIzYmQxNDMtNmJkNC00NjEyLTlmYzUtZTc2YjBiZGRkOTA1", "Content-Type": "application/json" },
+                    }).done(function (responseData, textStatus, jqXHR) {
+                        var addresses = responseData.locations;
+                        console.log(addresses);
+                        var streets = [];
+                        $.each(addresses, function (i, item) {
+                            var stringify =
+                                item.address.houseNumber + " "
+                                + item.address.street + ", "
+                                + item.address.city + ", "
+                                + item.address.state + ", "
+                                + item.address.postalCode + ", "
+                                + item.address.countryName;
+                            streets.push(stringify);
+                        });
+                        response(streets);
+                    });
+                },
+                minLength: 3,
+                select: function (event, ui) {
+                    var selected = ui.item.value;
+
+                    var data = selected.split(', ');
+                    $('#street').val(data[0])
+                    $('#city').val(data[1]);
+                    $('#state').val(data[2]);
+                    $('#zip').val(data[3]);
+                    $('#country').val(data[4]);
+                    
+                    $( "#name" ).trigger( "change" );
+                    return false;
+                }
+            });
+            $('#submitButton').click(function () {
+                let form = $('#addr_form');
+                let formData = new FormData(form[0]);
+                $.ajax({
+                    data: {
+                        street: formData.get('street'),
+                        locality: formData.get('city'),
+                        state: formData.get('state'),
+                        postalCode: formData.get('zip'),
+                        country: 'United States',
+                    },
+                    url: "https://api.myptv.com/geocoding/v1/locations/by-address",
+                    headers: { apiKey: "ZTc1ZDBkOWFlZGNjNDhiZjg3NTM2YWFjNjBkZDc3NjM6MzIzYmQxNDMtNmJkNC00NjEyLTlmYzUtZTc2YjBiZGRkOTA1", "Content-Type": "application/json" },
+                }).done(function (responseData, textStatus, jqXHR) {
+                    console.log(".done()");
+                    
+                    var addresses = responseData.locations;
+                    console.log(addresses[0].locationType);
+                    
+                    if (addresses[0].locationType != "EXACT_ADDRESS") {
+                        alert("The address is not precise enough");
+                    }
+                });
+
+            });
+
+        });
+
+
+    </script>
+</head>
+
+<body>
+    <form action="" method="post" name="addr_form" id="addr_form" enctype="multipart/form-data"
+        onsubmit="return false;">
+        <!-- Name Text Input-->
+        <div class="ui-widget">
+            <label for="name">Name</label>
+            <br>
+            <input type="text" id="nane" name="name">
+        </div>
+
+        <!-- Street Text Input-->
+        <div class="ui-widget">
+            <label for="street">Street</label>
+            <br>
+            <input type="text" id="street" name="street">
+        </div>
+
+        <!-- City Text Input-->
+        <div class="ui-widget">
+            <label for="city">City</label>
+            <br>
+            <input type="text" name="city[]" value="" id="city"/>
+        </div>
+
+        <!-- State Text Input-->
+        <div class="ui-widget">
+            <label for="state">State</label>
+            <br>
+            <input type="text" id="state" name="state">
+        </div>
+
+        <!-- zip Text Input-->
+        <div class="ui-widget">
+            <label for="zip">Zip</label>
+            <br>
+            <input type="text" id="zip" name="zip">
+        </div>
+
+        <!-- Street Text Input-->
+        <div class="ui-widget">
+            <label for="country">Country</label>
+            <br>
+            <input type="text" id="country" name="country">
+        </div>
+
+
+        <!-- Submit -->
+        <div class="ui-widget">
+            <input type="submit" id="submitButton" name="submit" disabled />
+        </div>
+
+    </form>
+</body>
+
+</html>

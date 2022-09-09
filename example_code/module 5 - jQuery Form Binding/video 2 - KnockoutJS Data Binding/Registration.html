@@ -1,0 +1,47 @@
+<html>
+
+<head>
+    <title>The Example Form</title>
+    <style>
+        div {
+            margin: 10px;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            var viewModel = {
+                firstName: "ko.observable()",
+                lastName: ko.observable(),
+            };
+
+            viewModel.firstName = "Richard";
+
+            ko.applyBindings(viewModel);
+        });
+    </script>
+</head>
+
+
+<body ng-app="myApp">
+    <div>
+        <label>First Name</label>
+        <br />
+        <input type="text" data-bind="value: firstName, valueUpdate: 'afterkeydown'" /></br></br>
+    </div>
+
+    <div>
+        <label>Last Name</label>
+        </br>
+        <input type="text" data-bind="value: lastName, valueUpdate: 'afterkeydown'" /></br></br>
+    </div>
+    <br />
+    </br>
+    My First Name is : <span data-bind='text: firstName'> </span></br>
+    My Last Name is : <span data-bind='text: lastName'> </span></br>
+</body>
+
+</html>

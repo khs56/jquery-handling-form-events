@@ -1,0 +1,1 @@
+https://api.myptv.com/geocoding/v1/locations/by-address?country=United%20States&street=Union%20Ave.&countryFilter=NL%2CDE%2CBE
