@@ -14,9 +14,21 @@
     <script>
 
         $(document).ready(function () {
-            const stateCodes = [ "AL", "AK", "AS", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FM", "FL", "GA", "GU", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MH", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "MP", "OH", "OK", "OR", "PW", "PA", "PR", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VI", "VA", "WA", "WV", "WI", "WY" ];
-
-            $('#state').autocomplete({ source: stateCodes});
+            $('#city').autocomplete(
+                {
+                    source: function (request, response) {
+                        $.getJSON('http://gd.geobytes.com/AutoCompleteCity?callback=?&filter=US,CA&q=' + request.term,
+                            function (data) {
+                                response(data);
+                            });
+                    },
+                    minLength: 3,
+                    select: function(event, ui){
+                        var selected = ui.item.value;
+                        var data = selected.split(',');
+                    }
+                }
+            );
         });
 
     </script>
@@ -24,7 +36,7 @@
 
 <body>
     <form action="" method="post" name="form_citydetails" id="form_citydetails" enctype="multipart/form-data"
-    onsubmit="return false;">
+        onsubmit="return false;">
         <!-- Name Text Input-->
         <div class="ui-widget">
             <label for="name">Name</label>
