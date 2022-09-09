@@ -23,9 +23,14 @@
                             });
                     },
                     minLength: 3,
-                    select: function(event, ui){
+                    select: function (event, ui) {
                         var selected = ui.item.value;
+                        
                         var data = selected.split(',');
+                        $('#city').val(data[0]);
+                        $('#state').val(data[1]);
+                        $('#country').val(data[2]);
+                        return false;
                     }
                 }
             );
